@@ -1,0 +1,37 @@
+{
+  "format": "crane_residual_ppo_training_v1",
+  "created_at_utc": "2026-11-01T18:42:56.905369+00:00",
+  "bc_model": "models/bc_grasp_v1/policy.ts",
+  "requested_timesteps": 128,
+  "actual_timesteps": 128,
+  "seed": 20261103,
+  "training_wall_seconds": 58.87670136000088,
+  "observation_size": 15,
+  "action_size": 5,
+  "residual_scale_rad": 0.06,
+  "residual_hand_scale_rad": 0.1,
+  "control_period_seconds": 0.2,
+  "success_height_m": 0.03,
+  "evaluation_episodes": 1,
+  "evaluation_successes": 1,
+  "evaluation_success_rate": 1.0,
+  "evaluation": [
+    {
+      "episode": 0,
+      "reward": 19.300433101896342,
+      "steps": 55,
+      "max_lift_height_m": 0.0338292121887207,
+      "success": true,
+      "target_xy": [
+        0.008714977000592665,
+        -0.10080567839512942
+      ]
+    }
+  ],
+  "versions": {
+    "gymnasium": "1.2.3",
+    "stable_baselines3": "2.8.0",
+    "torch": "2.6.0+cu124"
+  },
+  "interpretation": "Pipeline smoke test only; not evidence of improvement over BC."
+}

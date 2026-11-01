@@ -121,6 +121,50 @@ See [`results/bc_grasp_v1/README.md`](results/bc_grasp_v1/README.md) for the
 exact files and limitations. The observation uses the cube XYZ position
 reported directly by Gazebo; this is not yet a camera-image policy.
 
+## Fine-tune with residual PPO
+
+PPO is used here as a small correction policy, not as a replacement trained
+from random motion. The frozen BC model proposes the nominal five joint
+targets; PPO observes joints, velocities, cube-to-end-effector displacement,
+lift height, and elapsed time, then adds at most 0.06 rad to each arm target
+and 0.10 rad to the gripper target. Physical joint and velocity limits remain
+active.
+
+The container environment can be recreated with:
+
+```bash
+./tools/setup_ppo_env.sh
+```
+
+With Gazebo and the `pai_ros2` container running, first check the environment:
+
+```bash
+PPO_CHECK_ONLY=1 ./tools/run_ppo_training.sh 8
+```
+
+Then run a short smoke training or a longer experiment:
+
+```bash
+./tools/run_ppo_training.sh 128
+./tools/run_ppo_training.sh 10000
+```
+
+Set `PPO_RECORD_VIDEO=1` to record the visible Gazebo/VNC desktop during a
+run. This is best used for a short run because a full training video can become
+large:
+
+```bash
+PPO_RECORD_VIDEO=1 ./tools/run_ppo_training.sh 128
+```
+
+Outputs are written under ignored `rl_runs/` directories. Each completed run
+contains `ppo_residual.zip`, `summary.json`, and `training.monitor.csv`; video
+runs also contain `gazebo_training.mp4`. The initial 128-step smoke test is a
+pipeline check, not enough evidence to claim that PPO improves over BC. Compare
+many fixed-seed evaluation episodes before selecting a new production policy.
+The checked-in measured smoke result is documented in
+[`results/ppo_residual_smoke_v1/`](results/ppo_residual_smoke_v1/README.md).
+
 ## GitHub
 
 This workspace uses the `main` branch and the following remote:
