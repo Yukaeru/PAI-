@@ -1,4 +1,8 @@
-# CRANE+ grasp capture helpers
+# CRANE+ grasp behavior cloning
+
+This repository contains the successful Gazebo demonstrations, a PyTorch
+behavior-cloning policy, closed-loop ROS 2 evaluation tools, and MP4 recording
+for the CRANE+ cube-grasp task.
 
 ## Reset the robot and cube
 
@@ -53,6 +57,69 @@ moved cube is located.
 The current primary collection is
 `datasets/grasp_auto_20261102_012854`: 30/30 successful grasps and 5,036 merged
 transitions. See [`datasets/README.md`](datasets/README.md) for measured ranges.
+
+## Train the behavior-cloning policy
+
+The split is made by episode, not by individual transition. With the current
+30 demonstrations this gives 24 training, 3 validation, and 3 test episodes.
+Normalization statistics are computed from the training episodes only.
+
+```bash
+python3 tools/train_bc.py \
+  datasets/grasp_auto_20261102_012854/bc_collection/transitions.jsonl \
+  models/bc_grasp_retrained \
+  --device cpu
+```
+
+The command writes a portable TorchScript policy, normalization and split
+metadata, per-joint metrics, loss history, and a loss chart. The checked-in
+model is `models/bc_grasp_v1/policy.ts`.
+
+## Evaluate in Gazebo and record MP4
+
+Keep the `pai_ros2` container and CRANE+ Gazebo simulation running, then run:
+
+```bash
+./tools/run_bc_evaluation.sh 10
+```
+
+Every episode resets the robot and cube, chooses a new cube position, runs the
+learned policy at 0.2-second simulation-time intervals, and labels success only
+after a measured lift of at least 3 cm. Joint limits and a 1.5 rad/s rate limit
+are enforced. Once the learned action starts closing the gripper, it remains
+closed for the rest of that rollout, matching all training demonstrations and
+preventing a slipped cube from causing the stateless policy to reopen.
+
+The output path is printed when the run finishes. It contains:
+
+- `run/summary.json`: positions, lift heights, errors, and success rate
+- `run/traces/`: every observation and applied action
+- `gazebo.mp4`: H.264 recording of the Gazebo desktop
+
+Generated evaluation directories are ignored by Git. A compact representative
+video and the validated 10-episode summaries are kept under
+`results/bc_grasp_v1/`.
+
+## Watch Gazebo live
+
+Open the following URL while the container is running:
+
+<http://localhost:6080/vnc.html?autoconnect=1&resize=scale>
+
+Select the **Gazebo** window in the bottom task bar before starting an
+evaluation. The MP4 recorder captures exactly this VNC desktop, so camera zoom
+or viewpoint changes made there also appear in the video.
+
+## Current measured result
+
+- offline held-out test MAE: 0.00630 rad
+- persistence baseline MAE: 0.03212 rad
+- Gazebo evaluation: 9/10 successful grasps at unseen sampled positions
+- success threshold: 30 mm; mean maximum lift over all 10 trials: 47.6 mm
+
+See [`results/bc_grasp_v1/README.md`](results/bc_grasp_v1/README.md) for the
+exact files and limitations. The observation uses the cube XYZ position
+reported directly by Gazebo; this is not yet a camera-image policy.
 
 ## GitHub
 

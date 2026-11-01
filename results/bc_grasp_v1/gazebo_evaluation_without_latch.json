@@ -1,0 +1,201 @@
+{
+  "format": "crane_grasp_bc_gazebo_evaluation_v1",
+  "model": "/home/ubuntu/bc_tools/policy.ts",
+  "seed": 20261103,
+  "episodes": 10,
+  "successes": 6,
+  "failures": 4,
+  "success_rate": 0.6,
+  "success_height_m": 0.03,
+  "control_period_seconds": 0.2,
+  "rollout_seconds": 15.0,
+  "max_velocity_rad_s": 1.5,
+  "position_distribution": {
+    "x_center": 0.0,
+    "x_range": 0.01,
+    "y_center": -0.1,
+    "y_range": 0.01
+  },
+  "results": [
+    {
+      "episode": 0,
+      "cube_target_xy": [
+        -0.008211201258958533,
+        -0.10675749403788731
+      ],
+      "label": "success",
+      "error": null,
+      "cube_pose_initial": [
+        -0.008211201258958533,
+        -0.10675749403788731,
+        1.0146547461880502
+      ],
+      "max_cube_z": 1.0585493602828207,
+      "final_cube_z": 1.0585493602828207,
+      "max_lift_height_m": 0.04389461409477047,
+      "control_steps": 75
+    },
+    {
+      "episode": 1,
+      "cube_target_xy": [
+        -0.006116615441473559,
+        -0.09021795367965108
+      ],
+      "label": "failure",
+      "error": null,
+      "cube_pose_initial": [
+        -0.006116615441473559,
+        -0.09021795367965108,
+        1.0147687350160601
+      ],
+      "max_cube_z": 1.0375278752103456,
+      "final_cube_z": 1.0149999813341708,
+      "max_lift_height_m": 0.022759140194285488,
+      "control_steps": 75
+    },
+    {
+      "episode": 2,
+      "cube_target_xy": [
+        0.0063203376730673975,
+        -0.10890626407731101
+      ],
+      "label": "failure",
+      "error": null,
+      "cube_pose_initial": [
+        0.0063203376730673975,
+        -0.10890626407731101,
+        1.0147987320760627
+      ],
+      "max_cube_z": 1.0352403281462321,
+      "final_cube_z": 1.014999930785669,
+      "max_lift_height_m": 0.020441596070169377,
+      "control_steps": 75
+    },
+    {
+      "episode": 3,
+      "cube_target_xy": [
+        -0.004921517889245093,
+        -0.09520650868402883
+      ],
+      "label": "success",
+      "error": null,
+      "cube_pose_initial": [
+        -0.004921517889245093,
+        -0.09520650868402883,
+        1.0146687448160514
+      ],
+      "max_cube_z": 1.0644472029236756,
+      "final_cube_z": 1.0644472029236756,
+      "max_lift_height_m": 0.04977845810762416,
+      "control_steps": 75
+    },
+    {
+      "episode": 4,
+      "cube_target_xy": [
+        0.0040576385719059225,
+        -0.10771120143259812
+      ],
+      "label": "success",
+      "error": null,
+      "cube_pose_initial": [
+        0.0040576385719059225,
+        -0.10771120143259812,
+        1.0147187399160558
+      ],
+      "max_cube_z": 1.065212408392387,
+      "final_cube_z": 1.065212408392387,
+      "max_lift_height_m": 0.0504936684763313,
+      "control_steps": 75
+    },
+    {
+      "episode": 5,
+      "cube_target_xy": [
+        -0.0009440794944255045,
+        -0.10621442864463317
+      ],
+      "label": "success",
+      "error": null,
+      "cube_pose_initial": [
+        -0.0009440794944255042,
+        -0.10621442864463317,
+        1.0147287389360566
+      ],
+      "max_cube_z": 1.063253851961138,
+      "final_cube_z": 1.063253851961138,
+      "max_lift_height_m": 0.048525113025081446,
+      "control_steps": 75
+    },
+    {
+      "episode": 6,
+      "cube_target_xy": [
+        0.002873274013558724,
+        -0.10641625161281894
+      ],
+      "label": "success",
+      "error": null,
+      "cube_pose_initial": [
+        0.0028732740135587243,
+        -0.10641625161281894,
+        1.0146787438360523
+      ],
+      "max_cube_z": 1.0657592312916844,
+      "final_cube_z": 1.0657592312916844,
+      "max_lift_height_m": 0.051080487455632095,
+      "control_steps": 75
+    },
+    {
+      "episode": 7,
+      "cube_target_xy": [
+        -0.003582477501798382,
+        -0.09516587468401075
+      ],
+      "label": "failure",
+      "error": null,
+      "cube_pose_initial": [
+        -0.003582477501798382,
+        -0.09516587468401075,
+        1.0146627454040509
+      ],
+      "max_cube_z": 1.0402314760440456,
+      "final_cube_z": 1.014999948690529,
+      "max_lift_height_m": 0.025568730639994763,
+      "control_steps": 75
+    },
+    {
+      "episode": 8,
+      "cube_target_xy": [
+        -0.0032032401183996265,
+        -0.09245629382058274
+      ],
+      "label": "failure",
+      "error": null,
+      "cube_pose_initial": [
+        -0.0032032401183996265,
+        -0.09245629382058274,
+        1.0148147305080641
+      ],
+      "max_cube_z": 1.0234941097219648,
+      "final_cube_z": 1.0149999441402937,
+      "max_lift_height_m": 0.008679379213900607,
+      "control_steps": 75
+    },
+    {
+      "episode": 9,
+      "cube_target_xy": [
+        -0.005146268229435292,
+        -0.10765286966715147
+      ],
+      "label": "success",
+      "error": null,
+      "cube_pose_initial": [
+        -0.005146268229435292,
+        -0.10765286966715147,
+        1.0147887330560619
+      ],
+      "max_cube_z": 1.059657290248597,
+      "final_cube_z": 1.056316419612393,
+      "max_lift_height_m": 0.04486855719253513,
+      "control_steps": 75
+    }
+  ]
+}

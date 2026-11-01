@@ -1,0 +1,277 @@
+{
+  "format": "crane_grasp_bc_policy_v1",
+  "dataset": "/Users/yuka/Documents/ChatGPT/ros2/datasets/grasp_auto_20261102_012854/bc_collection/transitions.jsonl",
+  "dataset_sha256": "6cfa796d80b154b9b12663dc94d5e19a54a5e7c09098ebc953da4f072516af69",
+  "seed": 20261102,
+  "device_used": "cpu",
+  "state_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand",
+    "object_x",
+    "object_y",
+    "object_z"
+  ],
+  "action_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand"
+  ],
+  "architecture": [
+    8,
+    128,
+    128,
+    5
+  ],
+  "normalization_source": "training episodes only",
+  "normalization": {
+    "state_mean": [
+      -1.375755786895752,
+      -0.2586468458175659,
+      -1.3452975749969482,
+      -1.2436603307724,
+      -0.29715996980667114,
+      0.004940651822835207,
+      -0.10190921276807785,
+      1.0218418836593628
+    ],
+    "state_std": [
+      0.42795345187187195,
+      0.28654226660728455,
+      0.4045495390892029,
+      0.5406851768493652,
+      0.28398483991622925,
+      0.008161094971001148,
+      0.009748103097081184,
+      0.0135981235653162
+    ],
+    "action_mean": [
+      -1.4186758995056152,
+      -0.2667783796787262,
+      -1.3813762664794922,
+      -1.2891614437103271,
+      -0.25166600942611694
+    ],
+    "action_std": [
+      0.3620249927043915,
+      0.28339648246765137,
+      0.33721187710762024,
+      0.5032316446304321,
+      0.3256560266017914
+    ]
+  },
+  "split": {
+    "train": [
+      "episode_20261101_163301_999983_010",
+      "episode_20261101_163820_127208_023",
+      "episode_20261101_163553_676072_017",
+      "episode_20261101_162857_476638_000",
+      "episode_20261101_163035_360850_004",
+      "episode_20261101_163731_617949_021",
+      "episode_20261101_163755_778210_022",
+      "episode_20261101_163844_709225_024",
+      "episode_20261101_163148_575490_007",
+      "episode_20261101_163504_811420_015",
+      "episode_20261101_163212_907244_008",
+      "episode_20261101_163326_855269_011",
+      "episode_20261101_164022_646876_028",
+      "episode_20261101_163237_514699_009",
+      "episode_20261101_164047_300569_029",
+      "episode_20261101_163642_965613_019",
+      "episode_20261101_163440_512687_014",
+      "episode_20261101_163529_231833_016",
+      "episode_20261101_163957_991059_027",
+      "episode_20261101_163123_700608_006",
+      "episode_20261101_163909_315966_025",
+      "episode_20261101_162922_379039_001",
+      "episode_20261101_163415_760180_013",
+      "episode_20261101_163010_922382_003"
+    ],
+    "validation": [
+      "episode_20261101_163059_370564_005",
+      "episode_20261101_163933_676891_026",
+      "episode_20261101_163707_388885_020"
+    ],
+    "test": [
+      "episode_20261101_163351_567296_012",
+      "episode_20261101_162946_401111_002",
+      "episode_20261101_163618_178284_018"
+    ]
+  },
+  "split_samples": {
+    "train": 4030,
+    "validation": 500,
+    "test": 506
+  },
+  "best_epoch": 428,
+  "epochs_completed": 488,
+  "best_validation_loss": 0.0016111028380692005,
+  "metrics": {
+    "train": {
+      "samples": 4030,
+      "mae_rad": 0.005525059998035431,
+      "rmse_rad": 0.011960827745497227,
+      "per_joint": {
+        "crane_plus_joint1": {
+          "mae_rad": 0.006141417659819126,
+          "rmse_rad": 0.014762785285711288
+        },
+        "crane_plus_joint2": {
+          "mae_rad": 0.005998661741614342,
+          "rmse_rad": 0.010072050616145134
+        },
+        "crane_plus_joint3": {
+          "mae_rad": 0.007397726643830538,
+          "rmse_rad": 0.01716132089495659
+        },
+        "crane_plus_joint4": {
+          "mae_rad": 0.0051564681343734264,
+          "rmse_rad": 0.008709501475095749
+        },
+        "crane_plus_joint_hand": {
+          "mae_rad": 0.0029310279060155153,
+          "rmse_rad": 0.005055079702287912
+        }
+      },
+      "persistence_baseline": {
+        "samples": 4030,
+        "mae_rad": 0.03322020173072815,
+        "rmse_rad": 0.062284521758556366,
+        "per_joint": {
+          "crane_plus_joint1": {
+            "mae_rad": 0.031034739688038826,
+            "rmse_rad": 0.07177440822124481
+          },
+          "crane_plus_joint2": {
+            "mae_rad": 0.04201894998550415,
+            "rmse_rad": 0.053590595722198486
+          },
+          "crane_plus_joint3": {
+            "mae_rad": 0.04671773314476013,
+            "rmse_rad": 0.0852142721414566
+          },
+          "crane_plus_joint4": {
+            "mae_rad": 0.03250234201550484,
+            "rmse_rad": 0.05124952644109726
+          },
+          "crane_plus_joint_hand": {
+            "mae_rad": 0.013827118091285229,
+            "rmse_rad": 0.03853939473628998
+          }
+        }
+      }
+    },
+    "validation": {
+      "samples": 500,
+      "mae_rad": 0.006646737456321716,
+      "rmse_rad": 0.013778971508145332,
+      "per_joint": {
+        "crane_plus_joint1": {
+          "mae_rad": 0.007225793786346912,
+          "rmse_rad": 0.01713397167623043
+        },
+        "crane_plus_joint2": {
+          "mae_rad": 0.007473508361726999,
+          "rmse_rad": 0.01203980017453432
+        },
+        "crane_plus_joint3": {
+          "mae_rad": 0.008586063981056213,
+          "rmse_rad": 0.019423043355345726
+        },
+        "crane_plus_joint4": {
+          "mae_rad": 0.006252747494727373,
+          "rmse_rad": 0.010161745361983776
+        },
+        "crane_plus_joint_hand": {
+          "mae_rad": 0.003695571329444647,
+          "rmse_rad": 0.005500452127307653
+        }
+      },
+      "persistence_baseline": {
+        "samples": 500,
+        "mae_rad": 0.03299929201602936,
+        "rmse_rad": 0.061935845762491226,
+        "per_joint": {
+          "crane_plus_joint1": {
+            "mae_rad": 0.031256694346666336,
+            "rmse_rad": 0.07272368669509888
+          },
+          "crane_plus_joint2": {
+            "mae_rad": 0.041968487203121185,
+            "rmse_rad": 0.05390337109565735
+          },
+          "crane_plus_joint3": {
+            "mae_rad": 0.04579194635152817,
+            "rmse_rad": 0.08330845832824707
+          },
+          "crane_plus_joint4": {
+            "mae_rad": 0.032496001571416855,
+            "rmse_rad": 0.051409099251031876
+          },
+          "crane_plus_joint_hand": {
+            "mae_rad": 0.013483302667737007,
+            "rmse_rad": 0.037453360855579376
+          }
+        }
+      }
+    },
+    "test": {
+      "samples": 506,
+      "mae_rad": 0.006298836320638657,
+      "rmse_rad": 0.012802425771951675,
+      "per_joint": {
+        "crane_plus_joint1": {
+          "mae_rad": 0.007033926900476217,
+          "rmse_rad": 0.01605067402124405
+        },
+        "crane_plus_joint2": {
+          "mae_rad": 0.006422621197998524,
+          "rmse_rad": 0.010053749196231365
+        },
+        "crane_plus_joint3": {
+          "mae_rad": 0.007931439206004143,
+          "rmse_rad": 0.01818264275789261
+        },
+        "crane_plus_joint4": {
+          "mae_rad": 0.005662860814481974,
+          "rmse_rad": 0.009210288524627686
+        },
+        "crane_plus_joint_hand": {
+          "mae_rad": 0.004443344660103321,
+          "rmse_rad": 0.00673576258122921
+        }
+      },
+      "persistence_baseline": {
+        "samples": 506,
+        "mae_rad": 0.03212437406182289,
+        "rmse_rad": 0.060457270592451096,
+        "per_joint": {
+          "crane_plus_joint1": {
+            "mae_rad": 0.0304663497954607,
+            "rmse_rad": 0.07086020708084106
+          },
+          "crane_plus_joint2": {
+            "mae_rad": 0.04020172730088234,
+            "rmse_rad": 0.04974370449781418
+          },
+          "crane_plus_joint3": {
+            "mae_rad": 0.04473865032196045,
+            "rmse_rad": 0.08235666155815125
+          },
+          "crane_plus_joint4": {
+            "mae_rad": 0.031369421631097794,
+            "rmse_rad": 0.04999851807951927
+          },
+          "crane_plus_joint_hand": {
+            "mae_rad": 0.013845715671777725,
+            "rmse_rad": 0.038695257157087326
+          }
+        }
+      }
+    }
+  }
+}
