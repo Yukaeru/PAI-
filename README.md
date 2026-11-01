@@ -1,68 +1,49 @@
-# CRANE+ grasp behavior cloning
+# CRANE+ 物体把持：模倣学習とResidual PPO
 
-This repository contains the successful Gazebo demonstrations, a PyTorch
-behavior-cloning policy, closed-loop ROS 2 evaluation tools, and MP4 recording
-for the CRANE+ cube-grasp task.
+このリポジトリには、CRANE+による立方体把持課題について、Gazebo上で収集した成功デモ、PyTorchによる模倣学習（Behavior Cloning）モデル、ROS 2での閉ループ評価ツール、Residual PPOによる補正学習、MP4録画機能が含まれています。
 
-## Reset the robot and cube
+## ロボットと箱を初期状態に戻す
 
-Stop any active recording in the **CRANE+ Grasp** panel, then run on the Mac:
+**CRANE+ Grasp**パネルで録画が実行中でないことを確認し、Mac側で次を実行します。
 
 ```bash
 ./tools/reset_grasp_scene.sh
 ```
 
-The command opens the gripper, returns all four arm joints to zero, and puts
-`wood_cube_5cm` back at the initial world position. It deliberately refuses to
-run while `ros2 bag record` is active, because resetting during a capture would
-make that episode invalid.
+このコマンドは、グリッパーを開き、アームの4関節をゼロ位置へ戻し、`wood_cube_5cm`をワールド内の初期位置へ戻します。録画中にリセットするとエピソードが無効になるため、`ros2 bag record`の実行中は安全のため処理を拒否します。
 
-After it finishes, select `approach` in the panel and press **START NEW
-EPISODE**.
+リセット完了後、パネルで`approach`を選択し、**START NEW EPISODE**を押します。
 
-## Build compact behavior-cloning transitions
+## 模倣学習用の遷移データを作成する
 
 ```bash
 python3 tools/prepare_bc_dataset.py grasp_episode_20261101_161013_4446cd
 ```
 
-Outputs are written under the episode's `bc_dataset/` directory:
+変換結果は、対象エピソードの`bc_dataset/`ディレクトリへ出力されます。
 
-- `transitions.jsonl`: measured joint state and a controller-reference action
-  approximately 0.2 seconds in the future
-- `summary.json`: joint order, normalization values, segment boundaries, and
-  conversion settings
+- `transitions.jsonl`：計測した関節状態と、約0.2秒後のコントローラー目標値
+- `summary.json`：関節順序、正規化値、区間境界、変換設定
 
-Long stationary waits are omitted. Disconnected motion windows are separate
-segments so a target never crosses a removed time gap.
+長時間停止している区間は除外します。削除した時間区間をまたぐ目標値が作られないよう、連続していない動作区間は別々のセグメントとして扱います。
 
-## Collect varied successful demonstrations automatically
+## 位置を変えた成功デモを自動収集する
 
-Stop any active recording in the GUI panel, then run:
+GUIパネルで録画が実行中でないことを確認し、次を実行します。
 
 ```bash
 ./tools/run_auto_collection.sh 30
 ```
 
-Each episode varies the cube position within a small reachable area, records
-the cube pose with the five joint values, and labels success only when Gazebo
-reports a lift of at least 3 cm. Raw rosbag files are not created for automated
-episodes; the lightweight JSONL data is copied to `datasets/` and converted
-into one merged `bc_collection/transitions.jsonl` file.
+各エピソードでは、到達可能な狭い範囲内で箱の位置を変化させ、5関節の値と箱の位置を記録します。Gazebo上で箱を3 cm以上持ち上げた場合だけ成功と判定します。自動収集では容量の大きいrosbagを作成せず、軽量なJSONLデータを`datasets/`へコピーし、統合された`bc_collection/transitions.jsonl`へ変換します。
 
-Position variation is useful only because the automatic observations include
-`object_x`, `object_y`, and `object_z`. A joint-only policy cannot infer where a
-moved cube is located.
+自動収集時の観測には`object_x`、`object_y`、`object_z`が含まれるため、箱の位置を変化させる意味があります。関節状態だけを入力する方策では、移動した箱の位置を推定できません。
 
-The current primary collection is
-`datasets/grasp_auto_20261102_012854`: 30/30 successful grasps and 5,036 merged
-transitions. See [`datasets/README.md`](datasets/README.md) for measured ranges.
+現在の主要データセットは`datasets/grasp_auto_20261102_012854`です。30回中30回の把持に成功し、統合後は5,036遷移あります。計測範囲の詳細は[`datasets/README.md`](datasets/README.md)を参照してください。
 
-## Train the behavior-cloning policy
+## 模倣学習モデルを訓練する
 
-The split is made by episode, not by individual transition. With the current
-30 demonstrations this gives 24 training, 3 validation, and 3 test episodes.
-Normalization statistics are computed from the training episodes only.
+データは遷移単位ではなくエピソード単位で分割します。現在の30デモは、訓練24、検証3、テスト3エピソードに分けられます。正規化に使う統計量は、訓練エピソードだけから計算します。
 
 ```bash
 python3 tools/train_bc.py \
@@ -71,124 +52,99 @@ python3 tools/train_bc.py \
   --device cpu
 ```
 
-The command writes a portable TorchScript policy, normalization and split
-metadata, per-joint metrics, loss history, and a loss chart. The checked-in
-model is `models/bc_grasp_v1/policy.ts`.
+このコマンドは、移植可能なTorchScript方策、正規化・データ分割メタデータ、関節別評価値、損失履歴、損失グラフを出力します。リポジトリに保存済みのモデルは`models/bc_grasp_v1/policy.ts`です。
 
-## Evaluate in Gazebo and record MP4
+## Gazeboで評価してMP4を録画する
 
-Keep the `pai_ros2` container and CRANE+ Gazebo simulation running, then run:
+`pai_ros2`コンテナとCRANE+のGazeboシミュレーションを起動した状態で、次を実行します。
 
 ```bash
 ./tools/run_bc_evaluation.sh 10
 ```
 
-Every episode resets the robot and cube, chooses a new cube position, runs the
-learned policy at 0.2-second simulation-time intervals, and labels success only
-after a measured lift of at least 3 cm. Joint limits and a 1.5 rad/s rate limit
-are enforced. Once the learned action starts closing the gripper, it remains
-closed for the rest of that rollout, matching all training demonstrations and
-preventing a slipped cube from causing the stateless policy to reopen.
+各エピソードではロボットと箱をリセットし、新しい箱位置を選び、シミュレーション時刻で0.2秒間隔に学習済み方策を実行します。計測した持上げ量が3 cm以上になった場合だけ成功と判定します。関節可動域と1.5 rad/sの速度制限も適用されます。
 
-The output path is printed when the run finishes. It contains:
+学習済み動作がグリッパーを閉じ始めると、その試行が終わるまで閉状態を維持します。これはすべての訓練デモと同じ動作であり、箱が一時的にずれたときに、内部状態を持たない方策がグリッパーを再び開くことを防ぎます。
 
-- `run/summary.json`: positions, lift heights, errors, and success rate
-- `run/traces/`: every observation and applied action
-- `gazebo.mp4`: H.264 recording of the Gazebo desktop
+実行完了時に出力先が表示されます。主な内容は次のとおりです。
 
-Generated evaluation directories are ignored by Git. A compact representative
-video and the validated 10-episode summaries are kept under
-`results/bc_grasp_v1/`.
+- `run/summary.json`：箱位置、持上げ高さ、エラー、成功率
+- `run/traces/`：各ステップの観測値と適用した動作
+- `gazebo.mp4`：Gazeboデスクトップを録画したH.264動画
 
-## Watch Gazebo live
+自動生成される評価ディレクトリはGitの管理対象外です。代表的な軽量動画と、検証済みの10エピソードの結果は`results/bc_grasp_v1/`に保存しています。
 
-Open the following URL while the container is running:
+## Gazeboをブラウザで確認する
+
+コンテナの起動中に、次のURLを開きます。
 
 <http://localhost:6080/vnc.html?autoconnect=1&resize=scale>
 
-Select the **Gazebo** window in the bottom task bar before starting an
-evaluation. The MP4 recorder captures exactly this VNC desktop, so camera zoom
-or viewpoint changes made there also appear in the video.
+評価を開始する前に、画面下部のタスクバーで**Gazebo**ウィンドウを選択してください。MP4録画はこのVNCデスクトップをそのまま記録するため、カメラの拡大率や視点変更も動画へ反映されます。
 
-## Current measured result
+## 模倣学習の評価結果
 
-- offline held-out test MAE: 0.00630 rad
-- persistence baseline MAE: 0.03212 rad
-- Gazebo evaluation: 9/10 successful grasps at unseen sampled positions
-- success threshold: 30 mm; mean maximum lift over all 10 trials: 47.6 mm
+- 未使用テストデータのMAE：0.00630 rad
+- 現在値をそのまま予測するベースラインのMAE：0.03212 rad
+- Gazebo評価：未使用のランダム位置で10回中9回の把持に成功
+- 成功判定：30 mm以上の持上げ
+- 全10試行の平均最大持上げ量：47.6 mm
 
-See [`results/bc_grasp_v1/README.md`](results/bc_grasp_v1/README.md) for the
-exact files and limitations. The observation uses the cube XYZ position
-reported directly by Gazebo; this is not yet a camera-image policy.
+正確なファイル構成と制約事項は[`results/bc_grasp_v1/README.md`](results/bc_grasp_v1/README.md)を参照してください。現在の観測では、Gazeboが直接出力する箱のXYZ座標を使用しており、カメラ画像を入力する方策にはなっていません。
 
-## Fine-tune with residual PPO
+## Residual PPOで補正学習する
 
-PPO is used here as a small correction policy, not as a replacement trained
-from random motion. The frozen BC model proposes the nominal five joint
-targets; PPO observes joints, velocities, cube-to-end-effector displacement,
-lift height, and elapsed time, then adds at most 0.06 rad to each arm target
-and 0.10 rad to the gripper target. Physical joint and velocity limits remain
-active.
+ここではPPOをランダム動作から学習する代替方策としてではなく、模倣学習モデルの出力を小さく修正する補正方策として使用します。固定したBCモデルが5関節の基準目標値を出力し、PPOは関節角度、関節速度、箱と手先の位置差、持上げ高さ、経過時間を観測して補正を加えます。
 
-The container environment can be recreated with:
+アーム各関節の補正は最大±0.06 rad、グリッパーの補正は最大±0.10 radです。物理的な関節制限と速度制限は、PPOの出力に対しても適用されます。
+
+コンテナ内の学習環境は次のコマンドで再構築できます。
 
 ```bash
 ./tools/setup_ppo_env.sh
 ```
 
-With Gazebo and the `pai_ros2` container running, first check the environment:
+Gazeboと`pai_ros2`コンテナを起動し、最初に環境の動作確認を行います。
 
 ```bash
 PPO_CHECK_ONLY=1 ./tools/run_ppo_training.sh 8
 ```
 
-Then run a short smoke training or a longer experiment:
+続いて、短いスモークテストまたは長時間の学習を実行します。
 
 ```bash
 ./tools/run_ppo_training.sh 128
 ./tools/run_ppo_training.sh 10000
 ```
 
-Set `PPO_RECORD_VIDEO=1` to record the visible Gazebo/VNC desktop during a
-run. This is best used for a short run because a full training video can become
-large:
+学習中のGazebo/VNC画面を録画する場合は、`PPO_RECORD_VIDEO=1`を指定します。学習全体の動画は容量が大きくなるため、短い実行での利用を推奨します。
 
 ```bash
 PPO_RECORD_VIDEO=1 ./tools/run_ppo_training.sh 128
 ```
 
-To record only the saved policy after training, run:
+学習中ではなく、保存済み方策だけを録画する場合は次を実行します。
 
 ```bash
 ./tools/run_ppo_evaluation.sh 10
 ```
 
-This records reset, grasp, and lift for ten deterministic evaluation episodes
-to `evaluations/.../gazebo.mp4`, without recording the training period.
+リセット、接近、把持、持上げを含む決定論的な10評価エピソードが、`evaluations/.../gazebo.mp4`へ記録されます。
 
-Outputs are written under ignored `rl_runs/` directories. Each completed run
-contains `ppo_residual.zip`, `summary.json`, `training.monitor.csv`,
-`training_steps.csv`, and `evaluation_steps.csv`. It also generates a reward
-curve, reward-component chart, residual-action distribution, position success
-heatmaps, and per-episode CSV tables. Video runs contain
-`gazebo_training.mp4`. The initial 128-step smoke test is a pipeline check, not
-enough evidence to claim that PPO improves over BC. Compare many fixed-seed
-evaluation episodes before selecting a new production policy.
-The checked-in measured smoke result is documented in
-[`results/ppo_residual_smoke_v1/`](results/ppo_residual_smoke_v1/README.md).
+学習結果はGit管理対象外の`rl_runs/`以下へ出力されます。完了した実行には、`ppo_residual.zip`、`summary.json`、`training.monitor.csv`、`training_steps.csv`、`evaluation_steps.csv`が含まれます。さらに、報酬曲線、報酬内訳、補正量分布、箱位置別の成功率ヒートマップ、エピソード別CSVも自動生成されます。動画を有効にした場合は`gazebo_training.mp4`も生成されます。
 
-The measured 5,056-step run, plots, and limitations are documented in
-[`results/ppo_residual_5k_v1/`](results/ppo_residual_5k_v1/README.md). Its final
-model is `models/ppo_residual_5k_v1/ppo_residual.zip`.
+128ステップのスモークテストは処理全体の動作確認を目的としており、PPOがBCを改善したと判断できる学習量ではありません。新しいモデルを採用する前に、固定した複数seedで多数の評価エピソードを実行して比較する必要があります。
+
+保存済みのスモークテスト結果は[`results/ppo_residual_smoke_v1/`](results/ppo_residual_smoke_v1/README.md)にあります。
+
+5,056ステップの学習結果、グラフ、制約事項は[`results/ppo_residual_5k_v1/`](results/ppo_residual_5k_v1/README.md)にまとめています。最終モデルは`models/ppo_residual_5k_v1/ppo_residual.zip`です。
 
 ## GitHub
 
-This workspace uses the `main` branch and the following remote:
+このワークスペースは`main`ブランチを使用し、次のリモートリポジトリへ接続しています。
 
 ```text
 origin  https://github.com/Yukaeru/PAI-.git
 ```
 
-Raw rosbag directories are ignored because they grow quickly. Lightweight
-JSONL samples, metadata, conversion tools, and merged BC transitions are kept
-in Git.
+容量が大きくなるため、生のrosbagディレクトリはGitの管理対象外です。軽量なJSONLサンプル、メタデータ、変換ツール、統合済みの模倣学習用遷移データはGitで管理します。
