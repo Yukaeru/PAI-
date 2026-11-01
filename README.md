@@ -158,12 +158,19 @@ PPO_RECORD_VIDEO=1 ./tools/run_ppo_training.sh 128
 ```
 
 Outputs are written under ignored `rl_runs/` directories. Each completed run
-contains `ppo_residual.zip`, `summary.json`, and `training.monitor.csv`; video
-runs also contain `gazebo_training.mp4`. The initial 128-step smoke test is a
-pipeline check, not enough evidence to claim that PPO improves over BC. Compare
-many fixed-seed evaluation episodes before selecting a new production policy.
+contains `ppo_residual.zip`, `summary.json`, `training.monitor.csv`,
+`training_steps.csv`, and `evaluation_steps.csv`. It also generates a reward
+curve, reward-component chart, residual-action distribution, position success
+heatmaps, and per-episode CSV tables. Video runs contain
+`gazebo_training.mp4`. The initial 128-step smoke test is a pipeline check, not
+enough evidence to claim that PPO improves over BC. Compare many fixed-seed
+evaluation episodes before selecting a new production policy.
 The checked-in measured smoke result is documented in
 [`results/ppo_residual_smoke_v1/`](results/ppo_residual_smoke_v1/README.md).
+
+The measured 5,056-step run, plots, and limitations are documented in
+[`results/ppo_residual_5k_v1/`](results/ppo_residual_5k_v1/README.md). Its final
+model is `models/ppo_residual_5k_v1/ppo_residual.zip`.
 
 ## GitHub
 

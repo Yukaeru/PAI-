@@ -10,6 +10,7 @@ name="ppo_residual_${stamp}"
 host_output="$workspace_root/rl_runs/$name"
 container_root="/home/ubuntu/ppo_runs/$name"
 container_script="/home/ubuntu/ppo_tools/train_ppo.py"
+container_analysis="/home/ubuntu/ppo_tools/analyze_ppo_run.py"
 container_model="/home/ubuntu/ppo_tools/bc_policy.ts"
 bridge_pid_file="/tmp/${name}_pose_bridge.pid"
 video_pid_file="/tmp/${name}_ffmpeg.pid"
@@ -37,6 +38,7 @@ fi
 mkdir -p "$workspace_root/rl_runs"
 docker exec -u ubuntu "$container" mkdir -p /home/ubuntu/ppo_tools "$container_root"
 docker cp "$workspace_root/tools/train_ppo.py" "$container:$container_script"
+docker cp "$workspace_root/tools/analyze_ppo_run.py" "$container:$container_analysis"
 docker cp "$bc_model" "$container:$container_model"
 
 publisher_count="$(docker exec -u ubuntu "$container" bash -lc \
@@ -89,19 +91,38 @@ if [[ "${PPO_RECORD_VIDEO:-0}" == "1" ]]; then
   "
 fi
 
+# A prior manual inspection may leave Ignition paused. Training requires an
+# advancing /clock, so explicitly resume the world before starting Python.
+docker exec -u ubuntu "$container" ign service \
+  -s /world/default/control \
+  --reqtype ignition.msgs.WorldControl \
+  --reptype ignition.msgs.Boolean \
+  --timeout 5000 --req 'pause: false' >/dev/null
+
 check_arg=""
 if [[ "${PPO_CHECK_ONLY:-0}" == "1" ]]; then
   check_arg="--check-only"
 fi
 
+training_status=0
 docker exec -u ubuntu "$container" bash -lc \
   "source /opt/ros/humble/setup.bash; source /home/ubuntu/airobot_ws/install/setup.bash; \
    /home/ubuntu/ppo_venv/bin/python '$container_script' \
    --bc-model '$container_model' --output '$container_root/run' \
-   --timesteps '$timesteps' --eval-episodes '${PPO_EVAL_EPISODES:-1}' $check_arg"
+   --timesteps '$timesteps' --eval-episodes '${PPO_EVAL_EPISODES:-1}' $check_arg" \
+  || training_status=$?
+
+if [[ "${PPO_CHECK_ONLY:-0}" != "1" ]] \
+    && docker exec "$container" test -f "$container_root/run/training_steps.csv"; then
+  docker exec -u ubuntu "$container" bash -lc \
+    "source /opt/ros/humble/setup.bash; \
+     /home/ubuntu/ppo_venv/bin/python '$container_analysis' '$container_root/run'" \
+    || true
+fi
 
 stop_recorder
 stop_pose_bridge
 trap - EXIT INT TERM
 docker cp "$container:$container_root" "$host_output"
 echo "$host_output"
+exit "$training_status"

@@ -1,0 +1,35 @@
+{
+  "format": "crane_residual_ppo_eda_v1",
+  "training_steps": 5056,
+  "training_episodes": 80,
+  "training_successes": 39,
+  "training_success_rate": 0.4875,
+  "mean_episode_reward": 10.684730419115676,
+  "first_10_episode_mean_reward": 16.507832832939926,
+  "last_10_episode_mean_reward": 14.575128777359428,
+  "first_10_episode_success_rate": 0.8,
+  "last_10_episode_success_rate": 0.7,
+  "final_rolling_episode_reward": 14.575128777359424,
+  "joint_limit_clip_rate": 0.03441455696202532,
+  "rate_limit_clip_rate": 0.08564082278481013,
+  "mean_abs_residual_rad": {
+    "joint_1": 0.03921062858568747,
+    "joint_2": 0.03925860963745299,
+    "joint_3": 0.04366113095333826,
+    "joint_4": 0.03921566563910492,
+    "joint_5": 0.06594596987681768
+  },
+  "residual_boundary_rate": {
+    "joint_1": 0.36194620253164556,
+    "joint_2": 0.36313291139240506,
+    "joint_3": 0.4778481012658228,
+    "joint_4": 0.36451740506329117,
+    "joint_5": 0.35541930379746833
+  },
+  "evaluation": {
+    "episodes": 10,
+    "successes": 10,
+    "success_rate": 1.0,
+    "mean_episode_reward": 19.484030334536357
+  }
+}

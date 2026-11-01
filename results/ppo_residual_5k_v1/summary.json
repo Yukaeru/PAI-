@@ -1,0 +1,135 @@
+{
+  "format": "crane_residual_ppo_training_v1",
+  "created_at_utc": "2026-11-01T19:55:27.906828+00:00",
+  "bc_model": "models/bc_grasp_v1/policy.ts",
+  "requested_timesteps": 5000,
+  "actual_timesteps": 5056,
+  "seed": 20261103,
+  "training_wall_seconds": 2330.659449396,
+  "observation_size": 15,
+  "action_size": 5,
+  "residual_scale_rad": 0.06,
+  "residual_hand_scale_rad": 0.1,
+  "control_period_seconds": 0.2,
+  "success_height_m": 0.03,
+  "evaluation_episodes": 10,
+  "evaluation_successes": 10,
+  "evaluation_success_rate": 1.0,
+  "evaluation": [
+    {
+      "episode": 0,
+      "reward": 18.964541508231314,
+      "steps": 51,
+      "max_lift_height_m": 0.032300353050231934,
+      "success": true,
+      "target_xy": [
+        -0.009116636767239186,
+        -0.09099230385638862
+      ]
+    },
+    {
+      "episode": 1,
+      "reward": 19.688567836739125,
+      "steps": 37,
+      "max_lift_height_m": 0.03561520576477051,
+      "success": true,
+      "target_xy": [
+        0.0028473443242932866,
+        -0.09679695408488644
+      ]
+    },
+    {
+      "episode": 2,
+      "reward": 19.23505533368327,
+      "steps": 40,
+      "max_lift_height_m": 0.03283870220184326,
+      "success": true,
+      "target_xy": [
+        -0.00473713002795086,
+        -0.09191347460147381
+      ]
+    },
+    {
+      "episode": 3,
+      "reward": 19.208783688675613,
+      "steps": 43,
+      "max_lift_height_m": 0.03308212757110596,
+      "success": true,
+      "target_xy": [
+        -0.0024799594957750967,
+        -0.10187553894629742
+      ]
+    },
+    {
+      "episode": 4,
+      "reward": 19.629794753920287,
+      "steps": 36,
+      "max_lift_height_m": 0.03505134582519531,
+      "success": true,
+      "target_xy": [
+        0.004051021916345916,
+        -0.10190536418316931
+      ]
+    },
+    {
+      "episode": 5,
+      "reward": 19.786584122212602,
+      "steps": 38,
+      "max_lift_height_m": 0.03636372089385986,
+      "success": true,
+      "target_xy": [
+        -0.004841624470455599,
+        -0.09946149643455685
+      ]
+    },
+    {
+      "episode": 6,
+      "reward": 19.727508336996657,
+      "steps": 40,
+      "max_lift_height_m": 0.035979270935058594,
+      "success": true,
+      "target_xy": [
+        -0.005853930189545631,
+        -0.10822288513208637
+      ]
+    },
+    {
+      "episode": 7,
+      "reward": 19.37476791428402,
+      "steps": 37,
+      "max_lift_height_m": 0.033235788345336914,
+      "success": true,
+      "target_xy": [
+        -0.007875318565163894,
+        -0.10185496575079539
+      ]
+    },
+    {
+      "episode": 8,
+      "reward": 19.55534128978662,
+      "steps": 39,
+      "max_lift_height_m": 0.0349884033203125,
+      "success": true,
+      "target_xy": [
+        0.003917948220784085,
+        -0.09405624730791622
+      ]
+    },
+    {
+      "episode": 9,
+      "reward": 19.669358560834077,
+      "steps": 37,
+      "max_lift_height_m": 0.0353168249130249,
+      "success": true,
+      "target_xy": [
+        -0.007231069867328668,
+        -0.10678227035312149
+      ]
+    }
+  ],
+  "versions": {
+    "gymnasium": "1.2.3",
+    "stable_baselines3": "2.8.0",
+    "torch": "2.6.0+cu124"
+  }
+}

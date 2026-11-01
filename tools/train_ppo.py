@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import csv
 from datetime import datetime, timezone
 import json
 import math
@@ -24,6 +25,7 @@ from rclpy.qos import qos_profile_sensor_data
 from rosgraph_msgs.msg import Clock
 from sensor_msgs.msg import JointState
 from stable_baselines3 import PPO
+from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.env_checker import check_env
 from stable_baselines3.common.monitor import Monitor
 import torch
@@ -58,6 +60,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--batch-size", type=int, default=32)
     parser.add_argument("--max-episode-steps", type=int, default=75)
     parser.add_argument("--eval-episodes", type=int, default=1)
+    parser.add_argument("--checkpoint-freq", type=int, default=640)
     parser.add_argument("--control-period", type=float, default=0.20)
     parser.add_argument("--max-velocity", type=float, default=1.5)
     parser.add_argument("--residual-arm-scale", type=float, default=0.06)
@@ -72,19 +75,29 @@ def set_cube_pose(x: float, y: float) -> None:
         f'name: "wood_cube_5cm", position: {{x: {x}, y: {y}, z: 1.05}}, '
         "orientation: {w: 1.0}"
     )
-    result = subprocess.run(
-        [
-            "ign", "service", "-s", "/world/default/set_pose",
-            "--reqtype", "ignition.msgs.Pose",
-            "--reptype", "ignition.msgs.Boolean", "--timeout", "5000",
-            "--req", request,
-        ],
-        check=True,
-        capture_output=True,
-        text=True,
+    errors = []
+    for attempt in range(1, 6):
+        result = subprocess.run(
+            [
+                "ign", "service", "-s", "/world/default/set_pose",
+                "--reqtype", "ignition.msgs.Pose",
+                "--reptype", "ignition.msgs.Boolean", "--timeout", "5000",
+                "--req", request,
+            ],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode == 0 and "data: true" in result.stdout:
+            return
+        errors.append(
+            f"attempt {attempt}: returncode={result.returncode}, "
+            f"stdout={result.stdout.strip()!r}, stderr={result.stderr.strip()!r}"
+        )
+        time.sleep(0.5 * attempt)
+    raise RuntimeError(
+        "Gazebo rejected cube reset after 5 attempts: " + "; ".join(errors)
     )
-    if "data: true" not in result.stdout:
-        raise RuntimeError("Gazebo rejected cube reset: " + result.stdout.strip())
 
 
 def finite_map(names, values) -> dict[str, float]:
@@ -268,6 +281,41 @@ class ResidualGraspEnv(gym.Env):
         self.previous_lift = 0.0
         self.success_hold = 0
         self.gripper_latched = False
+        self.target_x = 0.0
+        self.target_y = -0.1
+        self.episode_index = -1
+        self.episode_return = 0.0
+        self.step_log_file = None
+        self.step_log_writer = None
+        self.log_phase = "disabled"
+
+    def enable_step_logging(self, path: Path, phase: str) -> None:
+        """Start a fresh step-level CSV for training or evaluation."""
+        self.close_step_log()
+        self.step_log_file = path.open("w", encoding="utf-8", newline="")
+        fields = [
+            "phase", "episode", "step", "sim_time", "target_x", "target_y",
+            "reward", "episode_return", "reward_distance_progress",
+            "reward_lift_progress", "reward_action_penalty", "reward_time_penalty",
+            "reward_candidate_bonus", "reward_success_bonus", "reward_timeout_penalty",
+            "distance_m", "lift_m", "cube_z", "hand_joint", "candidate",
+            "success", "terminated", "truncated", "gripper_latched",
+            "joint_limit_clip_count", "rate_limit_clip_count",
+        ]
+        for prefix in ("normalized_residual", "residual_rad", "nominal", "applied"):
+            fields.extend(f"{prefix}_joint_{index}" for index in range(1, 6))
+        self.step_log_writer = csv.DictWriter(self.step_log_file, fieldnames=fields)
+        self.step_log_writer.writeheader()
+        self.step_log_file.flush()
+        self.log_phase = phase
+        self.episode_index = -1
+
+    def close_step_log(self) -> None:
+        if self.step_log_file is not None:
+            self.step_log_file.flush()
+            self.step_log_file.close()
+        self.step_log_file = None
+        self.step_log_writer = None
 
     def measured_joints(self) -> np.ndarray:
         return np.asarray(
@@ -318,10 +366,10 @@ class ResidualGraspEnv(gym.Env):
     def reset(self, *, seed: int | None = None, options=None):
         super().reset(seed=seed)
         self.interface.reset_robot()
-        target_x = float(self.np_random.uniform(-0.010, 0.010))
-        target_y = float(self.np_random.uniform(-0.110, -0.090))
-        set_cube_pose(target_x, target_y)
-        self.interface.wait_for_cube(target_x, target_y)
+        self.target_x = float(self.np_random.uniform(-0.010, 0.010))
+        self.target_y = float(self.np_random.uniform(-0.110, -0.090))
+        set_cube_pose(self.target_x, self.target_y)
+        self.interface.wait_for_cube(self.target_x, self.target_y)
         self.interface.wait_wall(0.4)
         if self.interface.object_position is None:
             raise RuntimeError("Cube pose unavailable after reset")
@@ -330,12 +378,14 @@ class ResidualGraspEnv(gym.Env):
         self.previous_lift = 0.0
         self.success_hold = 0
         self.gripper_latched = False
+        self.episode_index += 1
+        self.episode_return = 0.0
         observation, metrics = self.observation()
         self.previous_distance = metrics["distance_m"]
         info = {
             **metrics,
-            "target_x": target_x,
-            "target_y": target_y,
+            "target_x": self.target_x,
+            "target_y": self.target_y,
             "is_success": False,
         }
         return observation, info
@@ -344,9 +394,16 @@ class ResidualGraspEnv(gym.Env):
         residual = np.clip(np.asarray(residual, dtype=np.float32), -1.0, 1.0)
         measured = self.measured_joints()
         nominal = self.nominal_action(measured)
-        desired = nominal + residual * self.residual_scale
-        desired = np.clip(desired, LOWER_LIMITS, UPPER_LIMITS)
+        desired_unclipped = nominal + residual * self.residual_scale
+        desired = np.clip(desired_unclipped, LOWER_LIMITS, UPPER_LIMITS)
+        joint_limit_clip_count = int(np.count_nonzero(
+            ~np.isclose(desired, desired_unclipped, atol=1e-7)
+        ))
+        desired_before_rate_limit = desired.copy()
         desired = np.clip(desired, measured - self.max_step, measured + self.max_step)
+        rate_limit_clip_count = int(np.count_nonzero(
+            ~np.isclose(desired, desired_before_rate_limit, atol=1e-7)
+        ))
 
         if nominal[4] >= 0.0 or desired[4] >= 0.0:
             self.gripper_latched = True
@@ -361,7 +418,8 @@ class ResidualGraspEnv(gym.Env):
         distance_progress = 10.0 * (self.previous_distance - metrics["distance_m"])
         lift_progress = 150.0 * (metrics["lift_m"] - self.previous_lift)
         action_penalty = -0.002 * float(np.mean(np.square(residual)))
-        reward = distance_progress + lift_progress + action_penalty - 0.01
+        time_penalty = -0.01
+        reward = distance_progress + lift_progress + action_penalty + time_penalty
 
         candidate = (
             metrics["lift_m"] >= self.success_height
@@ -371,12 +429,16 @@ class ResidualGraspEnv(gym.Env):
         self.success_hold = self.success_hold + 1 if candidate else 0
         terminated = self.success_hold >= 2
         truncated = self.episode_step >= self.max_episode_steps
-        if candidate:
-            reward += 1.0
+        candidate_bonus = 1.0 if candidate else 0.0
+        success_bonus = 10.0 if terminated else 0.0
+        timeout_penalty = -0.5 if truncated and not terminated else 0.0
+        reward += candidate_bonus
         if terminated:
-            reward += 10.0
+            reward += success_bonus
         elif truncated:
-            reward -= 0.5
+            reward += timeout_penalty
+
+        self.episode_return += float(reward)
 
         self.previous_distance = metrics["distance_m"]
         self.previous_lift = metrics["lift_m"]
@@ -390,9 +452,51 @@ class ResidualGraspEnv(gym.Env):
             "reward_lift_progress": lift_progress,
             "reward_action_penalty": action_penalty,
         }
+        if self.step_log_writer is not None:
+            row = {
+                "phase": self.log_phase,
+                "episode": self.episode_index,
+                "step": self.episode_step,
+                "sim_time": self.interface.sim_time,
+                "target_x": self.target_x,
+                "target_y": self.target_y,
+                "reward": reward,
+                "episode_return": self.episode_return,
+                "reward_distance_progress": distance_progress,
+                "reward_lift_progress": lift_progress,
+                "reward_action_penalty": action_penalty,
+                "reward_time_penalty": time_penalty,
+                "reward_candidate_bonus": candidate_bonus,
+                "reward_success_bonus": success_bonus,
+                "reward_timeout_penalty": timeout_penalty,
+                "distance_m": metrics["distance_m"],
+                "lift_m": metrics["lift_m"],
+                "cube_z": metrics["cube_z"],
+                "hand_joint": metrics["hand_joint"],
+                "candidate": int(candidate),
+                "success": int(terminated),
+                "terminated": int(terminated),
+                "truncated": int(truncated),
+                "gripper_latched": int(self.gripper_latched),
+                "joint_limit_clip_count": joint_limit_clip_count,
+                "rate_limit_clip_count": rate_limit_clip_count,
+            }
+            for prefix, values in (
+                ("normalized_residual", residual),
+                ("residual_rad", residual * self.residual_scale),
+                ("nominal", nominal),
+                ("applied", desired),
+            ):
+                row.update({
+                    f"{prefix}_joint_{index}": float(value)
+                    for index, value in enumerate(values, start=1)
+                })
+            self.step_log_writer.writerow(row)
+            self.step_log_file.flush()
         return observation, float(reward), terminated, truncated, info
 
     def close(self) -> None:
+        self.close_step_log()
         self.interface.destroy_node()
 
 
@@ -432,6 +536,8 @@ def main() -> None:
         raise SystemExit("--timesteps and --eval-episodes must be positive")
     if args.n_steps < 2 or args.batch_size < 2:
         raise SystemExit("--n-steps and --batch-size must be at least 2")
+    if args.checkpoint_freq < 1:
+        raise SystemExit("--checkpoint-freq must be positive")
     bc_model = args.bc_model.expanduser().resolve()
     output = args.output.expanduser().resolve()
     if not bc_model.is_file():
@@ -460,6 +566,7 @@ def main() -> None:
             print(json.dumps(result), flush=True)
             return
 
+        raw_env.enable_step_logging(output / "training_steps.csv", "training")
         env = Monitor(raw_env, filename=str(output / "training"))
         model = PPO(
             "MlpPolicy",
@@ -477,9 +584,36 @@ def main() -> None:
             verbose=1,
         )
         started = time.monotonic()
-        model.learn(total_timesteps=args.timesteps, progress_bar=False)
+        checkpoint_dir = output / "checkpoints"
+        checkpoint_dir.mkdir()
+        checkpoint = CheckpointCallback(
+            save_freq=args.checkpoint_freq,
+            save_path=str(checkpoint_dir),
+            name_prefix="ppo_residual",
+        )
+        try:
+            model.learn(
+                total_timesteps=args.timesteps,
+                callback=checkpoint,
+                progress_bar=False,
+            )
+        except BaseException as exception:
+            model.save(output / "ppo_residual_interrupted")
+            interruption = {
+                "format": "crane_residual_ppo_interruption_v1",
+                "interrupted_at_utc": datetime.now(timezone.utc).isoformat(),
+                "completed_timesteps": model.num_timesteps,
+                "error_type": type(exception).__name__,
+                "error": str(exception),
+            }
+            (output / "interruption.json").write_text(
+                json.dumps(interruption, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8",
+            )
+            raise
         training_seconds = time.monotonic() - started
         model.save(output / "ppo_residual")
+        raw_env.enable_step_logging(output / "evaluation_steps.csv", "evaluation")
         evaluation = evaluate(model, env, args.eval_episodes)
         successes = sum(item["success"] for item in evaluation)
         summary = {
