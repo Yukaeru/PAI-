@@ -16,6 +16,17 @@ so Stable-Baselines3 executed 5,056 environment steps.
 - success threshold: 30 mm lift
 - training wall time: 2,330.7 seconds (38.8 minutes)
 
+## Post-training video
+
+The final saved policy was evaluated again at 10 deterministic, seeded cube
+positions while recording the Gazebo desktop. All 10 trials succeeded, with a
+mean maximum lift of 35.0 mm. The full local recording is 366.75 seconds long;
+the checked-in `gazebo_evaluation_2min.mp4` is its first 120.25 seconds.
+
+The complete video and step log remain under
+`evaluations/ppo_residual_eval_20261102_052903/`. The exact ten outcomes are in
+`video_evaluation_summary.json`.
+
 The reward curve did not improve monotonically. Its 10-episode mean fell into
 the 4-8 range in the middle of training, then recovered to 14.58 at the end.
 The last-10 mean remained below the first-10 mean, so this run is not evidence
@@ -38,6 +49,8 @@ not paired and both samples are small.
 - `residual_distribution.png`: per-joint residuals in radians
 - `training_success_heatmap.png`: exploration-on training outcomes by position
 - `evaluation_success_heatmap.png`: deterministic outcomes by position
+- `gazebo_evaluation_2min.mp4`: two-minute representative post-training video
+- `video_evaluation_summary.json`: outcomes from the full recorded evaluation
 - `training_episode_summary.csv`: one row per training episode
 - `evaluation_episode_summary.csv`: one row per deterministic evaluation
 - `summary.json`: training configuration and evaluation outcomes

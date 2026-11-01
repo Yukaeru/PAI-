@@ -1,0 +1,136 @@
+{
+  "format": "crane_residual_ppo_gazebo_evaluation_v1",
+  "created_at_utc": "2026-11-01T20:35:14.339368+00:00",
+  "bc_model": "models/bc_grasp_v1/policy.ts",
+  "ppo_model": "models/ppo_residual_5k_v1/ppo_residual.zip",
+  "seed": 20261104,
+  "episodes": 10,
+  "successes": 10,
+  "failures": 0,
+  "success_rate": 1.0,
+  "mean_reward": 19.574277828514763,
+  "mean_max_lift_height_m": 0.03501409292221069,
+  "success_height_m": 0.03,
+  "results": [
+    {
+      "episode": 0,
+      "seed": 20261104,
+      "target_xy": [
+        0.004178610750322449,
+        -0.09071625632097849
+      ],
+      "steps": 37,
+      "reward": 19.60270517930761,
+      "max_lift_height_m": 0.0351179838180542,
+      "success": true
+    },
+    {
+      "episode": 1,
+      "seed": 20261105,
+      "target_xy": [
+        0.005245551894401703,
+        -0.09080196803627871
+      ],
+      "steps": 41,
+      "reward": 19.286199845854192,
+      "max_lift_height_m": 0.033687591552734375,
+      "success": true
+    },
+    {
+      "episode": 2,
+      "seed": 20261106,
+      "target_xy": [
+        -0.008277542217501557,
+        -0.09756452802868944
+      ],
+      "steps": 42,
+      "reward": 19.186428816851226,
+      "max_lift_height_m": 0.03263282775878906,
+      "success": true
+    },
+    {
+      "episode": 3,
+      "seed": 20261107,
+      "target_xy": [
+        0.005710823369049269,
+        -0.09624298498405416
+      ],
+      "steps": 39,
+      "reward": 19.312261652681975,
+      "max_lift_height_m": 0.033461809158325195,
+      "success": true
+    },
+    {
+      "episode": 4,
+      "seed": 20261108,
+      "target_xy": [
+        0.006234670612174567,
+        -0.10707695695413419
+      ],
+      "steps": 35,
+      "reward": 19.74180977228284,
+      "max_lift_height_m": 0.03564417362213135,
+      "success": true
+    },
+    {
+      "episode": 5,
+      "seed": 20261109,
+      "target_xy": [
+        -0.003758252040843406,
+        -0.09477757022490553
+      ],
+      "steps": 40,
+      "reward": 19.349904864178967,
+      "max_lift_height_m": 0.03361070156097412,
+      "success": true
+    },
+    {
+      "episode": 6,
+      "seed": 20261110,
+      "target_xy": [
+        0.0025215769269112138,
+        -0.10715763862326694
+      ],
+      "steps": 37,
+      "reward": 19.994577305238693,
+      "max_lift_height_m": 0.03749263286590576,
+      "success": true
+    },
+    {
+      "episode": 7,
+      "seed": 20261111,
+      "target_xy": [
+        -0.00015701802453965512,
+        -0.09025926969377776
+      ],
+      "steps": 39,
+      "reward": 19.48669817410409,
+      "max_lift_height_m": 0.034621477127075195,
+      "success": true
+    },
+    {
+      "episode": 8,
+      "seed": 20261112,
+      "target_xy": [
+        0.007492275712938269,
+        -0.10800545800277417
+      ],
+      "steps": 36,
+      "reward": 20.324258831402286,
+      "max_lift_height_m": 0.03959619998931885,
+      "success": true
+    },
+    {
+      "episode": 9,
+      "seed": 20261113,
+      "target_xy": [
+        -0.006319960044074273,
+        -0.09324767407101978
+      ],
+      "steps": 39,
+      "reward": 19.45793384324573,
+      "max_lift_height_m": 0.03427553176879883,
+      "success": true
+    }
+  ]
+}

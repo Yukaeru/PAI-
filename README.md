@@ -157,6 +157,15 @@ large:
 PPO_RECORD_VIDEO=1 ./tools/run_ppo_training.sh 128
 ```
 
+To record only the saved policy after training, run:
+
+```bash
+./tools/run_ppo_evaluation.sh 10
+```
+
+This records reset, grasp, and lift for ten deterministic evaluation episodes
+to `evaluations/.../gazebo.mp4`, without recording the training period.
+
 Outputs are written under ignored `rl_runs/` directories. Each completed run
 contains `ppo_residual.zip`, `summary.json`, `training.monitor.csv`,
 `training_steps.csv`, and `evaluation_steps.csv`. It also generates a reward
