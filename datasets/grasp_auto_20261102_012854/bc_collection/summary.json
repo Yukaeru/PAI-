@@ -1,0 +1,176 @@
+{
+  "format": "crane_grasp_bc_collection_v1",
+  "source_collection": "/Users/yuka/Documents/ChatGPT/ros2/datasets/grasp_auto_20261102_012854",
+  "success_episodes": 30,
+  "failed_episodes": 0,
+  "transitions": 5036,
+  "state_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand",
+    "object_x",
+    "object_y",
+    "object_z"
+  ],
+  "action_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand"
+  ],
+  "episodes": [
+    {
+      "episode": "episode_20261101_162857_476638_000",
+      "transitions": 172,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_162922_379039_001",
+      "transitions": 164,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_162946_401111_002",
+      "transitions": 167,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163010_922382_003",
+      "transitions": 169,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163035_360850_004",
+      "transitions": 165,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163059_370564_005",
+      "transitions": 167,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163123_700608_006",
+      "transitions": 172,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163148_575490_007",
+      "transitions": 166,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163212_907244_008",
+      "transitions": 169,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163237_514699_009",
+      "transitions": 166,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163301_999983_010",
+      "transitions": 173,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163326_855269_011",
+      "transitions": 168,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163351_567296_012",
+      "transitions": 165,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163415_760180_013",
+      "transitions": 169,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163440_512687_014",
+      "transitions": 166,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163504_811420_015",
+      "transitions": 166,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163529_231833_016",
+      "transitions": 168,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163553_676072_017",
+      "transitions": 165,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163618_178284_018",
+      "transitions": 174,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163642_965613_019",
+      "transitions": 167,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163707_388885_020",
+      "transitions": 167,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163731_617949_021",
+      "transitions": 164,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163755_778210_022",
+      "transitions": 167,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163820_127208_023",
+      "transitions": 167,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163844_709225_024",
+      "transitions": 168,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163909_315966_025",
+      "transitions": 165,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163933_676891_026",
+      "transitions": 166,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_163957_991059_027",
+      "transitions": 170,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_164022_646876_028",
+      "transitions": 167,
+      "segments": 1
+    },
+    {
+      "episode": "episode_20261101_164047_300569_029",
+      "transitions": 177,
+      "segments": 1
+    }
+  ]
+}

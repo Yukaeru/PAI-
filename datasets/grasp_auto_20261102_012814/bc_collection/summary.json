@@ -1,0 +1,31 @@
+{
+  "format": "crane_grasp_bc_collection_v1",
+  "source_collection": "/Users/yuka/Documents/ChatGPT/ros2/datasets/grasp_auto_20261102_012814",
+  "success_episodes": 1,
+  "failed_episodes": 0,
+  "transitions": 164,
+  "state_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand",
+    "object_x",
+    "object_y",
+    "object_z"
+  ],
+  "action_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand"
+  ],
+  "episodes": [
+    {
+      "episode": "episode_20261101_162818_156535_000",
+      "transitions": 164,
+      "segments": 1
+    }
+  ]
+}

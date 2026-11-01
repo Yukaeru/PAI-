@@ -1,0 +1,11 @@
+{
+  "format": "crane_grasp_collection_v1",
+  "seed": 20261102,
+  "requested_episodes": 30,
+  "successes": 30,
+  "failures": 0,
+  "x_range": 0.01,
+  "y_center": -0.1,
+  "y_range": 0.01,
+  "success_height_m": 0.03
+}

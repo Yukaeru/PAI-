@@ -1,0 +1,116 @@
+{
+  "format": "crane_grasp_bc_v1",
+  "source_episode": "/Users/yuka/Documents/ChatGPT/ros2/grasp_episode_20261101_161013_4446cd",
+  "source_label": "success",
+  "joint_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand"
+  ],
+  "state": "measured joint positions at the current sample",
+  "action": "controller reference approximately 0.2s in the future",
+  "motion_threshold_rad": 0.0001,
+  "context_seconds": 0.5,
+  "original_samples": 1507,
+  "output_samples": 370,
+  "removed_samples": 1137,
+  "segments": [
+    {
+      "segment_id": 0,
+      "samples": 77,
+      "start_sim_time": 753.238,
+      "end_sim_time": 758.199,
+      "start_phase": "approach",
+      "end_phase": "approach"
+    },
+    {
+      "segment_id": 1,
+      "samples": 16,
+      "start_sim_time": 768.978,
+      "end_sim_time": 769.943,
+      "start_phase": "approach",
+      "end_phase": "descend"
+    },
+    {
+      "segment_id": 2,
+      "samples": 59,
+      "start_sim_time": 775.928,
+      "end_sim_time": 779.843,
+      "start_phase": "descend",
+      "end_phase": "descend"
+    },
+    {
+      "segment_id": 3,
+      "samples": 41,
+      "start_sim_time": 787.277,
+      "end_sim_time": 790.143,
+      "start_phase": "descend",
+      "end_phase": "descend"
+    },
+    {
+      "segment_id": 4,
+      "samples": 42,
+      "start_sim_time": 802.233,
+      "end_sim_time": 805.226,
+      "start_phase": "descend",
+      "end_phase": "descend"
+    },
+    {
+      "segment_id": 5,
+      "samples": 33,
+      "start_sim_time": 814.79,
+      "end_sim_time": 816.9,
+      "start_phase": "descend",
+      "end_phase": "close"
+    },
+    {
+      "segment_id": 6,
+      "samples": 21,
+      "start_sim_time": 819.632,
+      "end_sim_time": 820.613,
+      "start_phase": "close",
+      "end_phase": "lift"
+    },
+    {
+      "segment_id": 7,
+      "samples": 81,
+      "start_sim_time": 823.86,
+      "end_sim_time": 827.827,
+      "start_phase": "lift",
+      "end_phase": "lift"
+    }
+  ],
+  "normalization": {
+    "state_mean": [
+      -1.4064049701068764,
+      -0.30274666655432375,
+      -1.388634752900763,
+      -1.1823589607960536,
+      -0.3186687415567689
+    ],
+    "state_std": [
+      0.4051019769955543,
+      0.33685033546176074,
+      0.39996737355099304,
+      0.5373988537549685,
+      0.295886624524768
+    ],
+    "action_mean": [
+      -1.4267394777535616,
+      -0.3074858830474395,
+      -1.4055168235311695,
+      -1.2033127477334078,
+      -0.29401943783754747
+    ],
+    "action_std": [
+      0.3742870259116536,
+      0.3351540139475243,
+      0.37027612451892516,
+      0.5227526254521634,
+      0.3232871104527851
+    ]
+  },
+  "warning": "One success episode is enough to validate the pipeline, not to train a robust policy."
+}

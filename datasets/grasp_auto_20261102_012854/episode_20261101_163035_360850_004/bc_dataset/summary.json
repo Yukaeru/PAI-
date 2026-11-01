@@ -1,0 +1,76 @@
+{
+  "format": "crane_grasp_bc_v1",
+  "source_episode": "/Users/yuka/Documents/ChatGPT/ros2/datasets/grasp_auto_20261102_012854/episode_20261101_163035_360850_004",
+  "source_label": "success",
+  "joint_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand"
+  ],
+  "state_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand",
+    "object_x",
+    "object_y",
+    "object_z"
+  ],
+  "state": "measured joint positions and Gazebo object position",
+  "action": "controller reference approximately 0.2s in the future",
+  "motion_threshold_rad": 0.0001,
+  "context_seconds": 0.5,
+  "original_samples": 168,
+  "output_samples": 165,
+  "removed_samples": 3,
+  "segments": [
+    {
+      "segment_id": 0,
+      "samples": 165,
+      "start_sim_time": 1557.001,
+      "end_sim_time": 1567.923,
+      "start_phase": "approach",
+      "end_phase": "lift"
+    }
+  ],
+  "normalization": {
+    "state_mean": [
+      -1.2971256189389362,
+      -0.3280414759006619,
+      -1.3957597595115465,
+      -1.2659022565412128,
+      -0.295907759648088,
+      0.013335413826752011,
+      -0.09376490562642367,
+      1.0219328952508193
+    ],
+    "state_std": [
+      0.4007773769996074,
+      0.27516892317181796,
+      0.4169739596347848,
+      0.5328953602657608,
+      0.2832252034549277,
+      0.006485997197827591,
+      0.007488951657376213,
+      0.013722295694124552
+    ],
+    "action_mean": [
+      -1.3376126094872123,
+      -0.33863586865290274,
+      -1.4332766701195485,
+      -1.3122570442578252,
+      -0.24907444152766503
+    ],
+    "action_std": [
+      0.33839961938588353,
+      0.26944634073333024,
+      0.34670724571678363,
+      0.49294521174086464,
+      0.32587600833067765
+    ]
+  },
+  "warning": "One success episode is enough to validate the pipeline, not to train a robust policy."
+}

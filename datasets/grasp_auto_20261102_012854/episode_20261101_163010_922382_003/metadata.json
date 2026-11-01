@@ -1,0 +1,69 @@
+{
+  "format": "crane_grasp_capture_v2_auto",
+  "label": "success",
+  "success_source": "gazebo_cube_lift_height",
+  "success_height_m": 0.03,
+  "measured_lift_height_m": 0.04523384056113877,
+  "sample_count": 172,
+  "joint_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand"
+  ],
+  "observation_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand",
+    "object_x",
+    "object_y",
+    "object_z"
+  ],
+  "phases": [
+    "approach",
+    "descend",
+    "close",
+    "lift"
+  ],
+  "pose_topic": "/world/default/dynamic_pose/info",
+  "cube_target_xy": [
+    0.00677807340766857,
+    -0.10594087917060539
+  ],
+  "cube_pose_initial": {
+    "frame_id": "world",
+    "child_frame_id": "wood_cube_5cm",
+    "position": [
+      0.006778073407668571,
+      -0.10594087917060539,
+      1.0147947324680624
+    ],
+    "orientation": [
+      -3.3580674795414725e-18,
+      -1.0826202633765287e-17,
+      -9.026338074725664e-19,
+      1.0
+    ]
+  },
+  "cube_pose_final": {
+    "frame_id": "world",
+    "child_frame_id": "wood_cube_5cm",
+    "position": [
+      0.02120624397783443,
+      -0.1301978556033749,
+      1.0600285730292012
+    ],
+    "orientation": [
+      -0.18675924150103493,
+      -0.016416323699216636,
+      0.033553755296283204,
+      0.9816952864996744
+    ]
+  },
+  "episode_index": 3,
+  "seed": 20261102,
+  "error": null
+}

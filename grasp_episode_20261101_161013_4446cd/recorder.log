@@ -1,0 +1,16 @@
+[INFO] [1793549414.205256463] [rosbag2_recorder]: Press SPACE for pausing/resuming
+[INFO] [1793549414.248807964] [rosbag2_storage]: Opened database '/home/ubuntu/dataset/grasp_capture/episode_20261101_161013_4446cd/bag/bag_0.db3' for READ_WRITE.
+[INFO] [1793549414.252478005] [rosbag2_recorder]: Event publisher thread: Starting
+[INFO] [1793549414.252690630] [rosbag2_recorder]: Listening for topics...
+[INFO] [1793549414.253668964] [rosbag2_recorder]: Recording...
+[INFO] [1793549414.255018839] [rosbag2_recorder]: use_sim_time set, waiting for /clock before starting recording...
+[INFO] [1793549415.281859256] [rosbag2_recorder]: Sim time /clock found, starting recording.
+[INFO] [1793549415.301175339] [rosbag2_recorder]: Subscribed to topic '/clock'
+[INFO] [1793549415.322632131] [rosbag2_recorder]: Subscribed to topic '/tf'
+[INFO] [1793549415.328411547] [rosbag2_recorder]: Subscribed to topic '/tf_static'
+[INFO] [1793549415.644852006] [rosbag2_recorder]: Subscribed to topic '/crane_plus_arm_controller/controller_state'
+[INFO] [1793549415.652557214] [rosbag2_recorder]: Subscribed to topic '/crane_plus_gripper_controller/controller_state'
+[INFO] [1793549415.658742923] [rosbag2_recorder]: Subscribed to topic '/joint_states'
+[INFO] [1793549568.944654007] [rosbag2_cpp]: Writing remaining messages from cache to the bag. It may take a while
+[INFO] [1793549568.972836799] [rosbag2_recorder]: Event publisher thread: Exiting
+[INFO] [1793549568.973207632] [rosbag2_recorder]: Recording stopped

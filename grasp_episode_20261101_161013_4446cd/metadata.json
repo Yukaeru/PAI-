@@ -1,0 +1,25 @@
+{
+  "format": "crane_grasp_capture_v1",
+  "label": "success",
+  "success_source": "human_label_only",
+  "sample_count": 1507,
+  "joint_order": [
+    "crane_plus_joint1",
+    "crane_plus_joint2",
+    "crane_plus_joint3",
+    "crane_plus_joint4",
+    "crane_plus_joint_hand"
+  ],
+  "phases": [
+    "approach",
+    "descend",
+    "close",
+    "lift",
+    "release"
+  ],
+  "sampling": "approximately 10 Hz wall-clock; use sim_time for resampling",
+  "pose_topic": null,
+  "notes": "This is raw capture, not a ready-made PPO/ACT dataset.",
+  "recorder_exit_code": 0,
+  "recorder_note": null
+}
